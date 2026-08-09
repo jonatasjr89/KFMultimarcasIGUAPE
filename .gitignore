@@ -1,6 +1,0 @@
-__pycache__/
-*.pyc
-instance/
-static/fotos/*
-!static/fotos/.gitkeep
-.env
