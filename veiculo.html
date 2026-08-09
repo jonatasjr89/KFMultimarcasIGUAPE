@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block titulo %}{{ veiculo['marca'] }} {{ veiculo['modelo'] }}{% endblock %}
+
+{% block conteudo %}
+<a href="{{ url_for('index') }}" class="voltar">&larr; Voltar para o estoque</a>
+
+<div class="cabecalho-veiculo">
+    <div>
+        <h1>{{ veiculo['marca'] }} {{ veiculo['modelo'] }}</h1>
+        <p class="subtitulo">
+            {{ veiculo['ano_fabricacao'] or '?' }}/{{ veiculo['ano_modelo'] or '?' }}
+            • {{ veiculo['cor'] or 'cor não informada' }}
+            • Placa: {{ veiculo['placa'] or '—' }}
+            • Renavam: {{ veiculo['renavam'] or '—' }}
+        </p>
+        <div class="selos-detalhe">
+            {% if veiculo['status'] == 'vendido' %}<span class="selo selo-vendido">Vendido</span>{% else %}<span class="selo selo-disponivel">Em estoque</span>{% endif %}
+            {% if veiculo['tipo'] == 'consignado' %}<span class="selo selo-consignado">Consignado</span>{% endif %}
+        </div>
+    </div>
+    <div class="acoes-topo">
+        <a href="{{ url_for('editar_veiculo', veiculo_id=veiculo['id']) }}" class="botao">Editar dados</a>
+        <form method="post" action="{{ url_for('excluir_veiculo', veiculo_id=veiculo['id']) }}" onsubmit="return confirm('Excluir este veículo e todas as fotos? Essa ação não pode ser desfeita.');">
+            <button type="submit" class="botao botao-perigo">Excluir</button>
+        </form>
+    </div>
+</div>
+
+<div class="grade-detalhe">
+    <section class="painel">
+        <h2>Fotos</h2>
+        <form method="post" action="{{ url_for('upload_fotos', veiculo_id=veiculo['id']) }}" enctype="multipart/form-data" class="form-fotos">
+            <input type="file" name="fotos" accept="image/*" multiple required>
+            <button type="submit" class="botao botao-primario">Enviar fotos</button>
+        </form>
+
+        {% if fotos|length == 0 %}
+            <p class="vazio">Nenhuma foto cadastrada ainda.</p>
+        {% else %}
+        <div class="galeria">
+            {% for f in fotos %}
+            <div class="miniatura">
+                <img src="{{ url_for('servir_foto', veiculo_id=veiculo['id'], nome_arquivo=f['arquivo']) }}" alt="Foto do veículo">
+                <form method="post" action="{{ url_for('excluir_foto', veiculo_id=veiculo['id'], foto_id=f['id']) }}" onsubmit="return confirm('Excluir esta foto?');">
+                    <button type="submit" class="botao-excluir-foto" title="Excluir foto">×</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </section>
+
+    <section class="painel">
+        <h2>Valores</h2>
+        <ul class="lista-valores">
+            <li><span>Valor FIPE</span><strong>{{ 'R$ %.2f'|format(veiculo['valor_fipe'])|replace('.', ',') if veiculo['valor_fipe'] else 'não consultado' }}</strong></li>
+            <li><span>Referência FIPE</span><strong>{{ veiculo['valor_fipe_mes_referencia'] or '—' }}</strong></li>
+            <li><span>Valor de anúncio</span><strong>{{ 'R$ %.2f'|format(veiculo['valor_anuncio'])|replace('.', ',') if veiculo['valor_anuncio'] else '—' }}</strong></li>
+            {% if veiculo['status'] == 'vendido' %}
+            <li><span>Valor de venda</span><strong>{{ 'R$ %.2f'|format(veiculo['valor_venda'])|replace('.', ',') if veiculo['valor_venda'] else '—' }}</strong></li>
+            <li><span>Comprador</span><strong>{{ veiculo['comprador_nome'] or '—' }}</strong></li>
+            <li><span>Data de saída</span><strong>{{ veiculo['data_saida'] or '—' }}</strong></li>
+            {% endif %}
+        </ul>
+        <a href="{{ url_for('editar_veiculo', veiculo_id=veiculo['id']) }}#fipe" class="link-sutil">Refazer consulta FIPE</a>
+
+        {% if veiculo['tipo'] == 'consignado' %}
+        <h3>Dados do consignado</h3>
+        <ul class="lista-valores">
+            <li><span>Proprietário</span><strong>{{ veiculo['consignado_nome'] or '—' }}</strong></li>
+            <li><span>Contato</span><strong>{{ veiculo['consignado_contato'] or '—' }}</strong></li>
+            <li><span>Valor a repassar</span><strong>{{ 'R$ %.2f'|format(veiculo['consignado_valor_repasse'])|replace('.', ',') if veiculo['consignado_valor_repasse'] else '—' }}</strong></li>
+        </ul>
+        {% endif %}
+
+        {% if veiculo['observacoes'] %}
+        <h3>Observações</h3>
+        <p>{{ veiculo['observacoes'] }}</p>
+        {% endif %}
+    </section>
+
+    <section class="painel">
+        <h2>Entrada / Saída</h2>
+        <p><strong>Data de entrada:</strong> {{ veiculo['data_entrada'] or '—' }}</p>
+        {% if veiculo['status'] == 'disponivel' %}
+        <form method="post" action="{{ url_for('registrar_saida', veiculo_id=veiculo['id']) }}" class="form-saida">
+            <div class="campo">
+                <label>Valor de venda (R$)</label>
+                <input type="number" step="0.01" name="valor_venda">
+            </div>
+            <div class="campo">
+                <label>Comprador</label>
+                <input type="text" name="comprador_nome">
+            </div>
+            <div class="campo">
+                <label>Data de saída</label>
+                <input type="date" name="data_saida">
+            </div>
+            <button type="submit" class="botao botao-primario">Registrar saída (marcar como vendido)</button>
+        </form>
+        {% else %}
+        <form method="post" action="{{ url_for('reabrir_veiculo', veiculo_id=veiculo['id']) }}" onsubmit="return confirm('Voltar este veículo para o estoque?');">
+            <button type="submit" class="botao">Reabrir (voltar ao estoque)</button>
+        </form>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
