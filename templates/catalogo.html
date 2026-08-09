@@ -1,0 +1,33 @@
+{% extends "base_publico.html" %}
+{% block titulo %}Catálogo de Veículos – KF Multimarcas{% endblock %}
+
+{% block conteudo %}
+<h1>Nossos veículos disponíveis</h1>
+
+{% if veiculos|length == 0 %}
+    <p class="vazio">Nenhum veículo disponível no momento. Fale com a gente pelo WhatsApp!</p>
+{% else %}
+<div class="grade-veiculos">
+    {% for v in veiculos %}
+    <a class="cartao-veiculo" href="{{ url_for('catalogo_veiculo', veiculo_id=v['id']) }}">
+        <div class="foto-capa">
+            {% if v['id'] in fotos_capa %}
+                <img src="{{ url_for('servir_foto', veiculo_id=v['id'], nome_arquivo=fotos_capa[v['id']]) }}" alt="Foto do veículo">
+            {% else %}
+                <div class="sem-foto">Sem foto</div>
+            {% endif %}
+        </div>
+        <div class="info-cartao">
+            <strong>{{ v['marca'] }} {{ v['modelo'] }}</strong>
+            <span>Ano {{ v['ano_fabricacao'] or '?' }}/{{ v['ano_modelo'] or '?' }}</span>
+            {% if v['valor_anuncio'] %}
+                <span class="valor">R$ {{ '%.2f'|format(v['valor_anuncio'])|replace('.', ',') }}</span>
+            {% else %}
+                <span class="valor">Consulte o valor</span>
+            {% endif %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

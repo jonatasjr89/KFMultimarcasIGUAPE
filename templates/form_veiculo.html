@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar' if veiculo else 'Novo' }} veículo{% endblock %}
+
+{% block conteudo %}
+<h1>{{ 'Editar veículo' if veiculo else 'Cadastrar novo veículo' }}</h1>
+
+<form method="post" class="formulario">
+    <fieldset>
+        <legend>Consulta FIPE (opcional, mas recomendado)</legend>
+        <p class="ajuda">Selecione marca, modelo e ano para preencher o valor FIPE automaticamente.</p>
+        <div class="linha">
+            <div class="campo">
+                <label>Marca</label>
+                <select id="fipe_marca"><option value="">Carregando...</option></select>
+            </div>
+            <div class="campo">
+                <label>Modelo</label>
+                <select id="fipe_modelo" disabled><option value="">Selecione a marca</option></select>
+            </div>
+            <div class="campo">
+                <label>Ano</label>
+                <select id="fipe_ano" disabled><option value="">Selecione o modelo</option></select>
+            </div>
+        </div>
+        <div id="fipe_resultado" class="resultado-fipe" style="display:none;">
+            <strong id="fipe_valor_texto"></strong>
+            <span id="fipe_mes_texto"></span>
+        </div>
+        <input type="hidden" name="fipe_marca_codigo" id="input_fipe_marca_codigo" value="{{ veiculo['fipe_marca_codigo'] if veiculo else '' }}">
+        <input type="hidden" name="fipe_modelo_codigo" id="input_fipe_modelo_codigo" value="{{ veiculo['fipe_modelo_codigo'] if veiculo else '' }}">
+        <input type="hidden" name="fipe_ano_codigo" id="input_fipe_ano_codigo" value="{{ veiculo['fipe_ano_codigo'] if veiculo else '' }}">
+        <input type="hidden" name="valor_fipe" id="input_valor_fipe" value="{{ veiculo['valor_fipe'] if veiculo else '' }}">
+        <input type="hidden" name="valor_fipe_mes_referencia" id="input_valor_fipe_mes" value="{{ veiculo['valor_fipe_mes_referencia'] if veiculo else '' }}">
+    </fieldset>
+
+    <fieldset>
+        <legend>Dados do veículo</legend>
+        <div class="linha">
+            <div class="campo">
+                <label>Marca *</label>
+                <input type="text" name="marca" required value="{{ veiculo['marca'] if veiculo else '' }}">
+            </div>
+            <div class="campo">
+                <label>Modelo *</label>
+                <input type="text" name="modelo" required value="{{ veiculo['modelo'] if veiculo else '' }}">
+            </div>
+        </div>
+        <div class="linha">
+            <div class="campo">
+                <label>Ano de fabricação</label>
+                <input type="number" name="ano_fabricacao" value="{{ veiculo['ano_fabricacao'] if veiculo else '' }}">
+            </div>
+            <div class="campo">
+                <label>Ano do modelo</label>
+                <input type="number" name="ano_modelo" value="{{ veiculo['ano_modelo'] if veiculo else '' }}">
+            </div>
+            <div class="campo">
+                <label>Cor</label>
+                <input type="text" name="cor" value="{{ veiculo['cor'] if veiculo else '' }}">
+            </div>
+        </div>
+        <div class="linha">
+            <div class="campo">
+                <label>Placa</label>
+                <input type="text" name="placa" value="{{ veiculo['placa'] if veiculo else '' }}">
+            </div>
+            <div class="campo">
+                <label>Renavam</label>
+                <input type="text" name="renavam" value="{{ veiculo['renavam'] if veiculo else '' }}">
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Origem do veículo</legend>
+        <div class="linha">
+            <div class="campo">
+                <label>Tipo</label>
+                <select name="tipo" id="campo_tipo">
+                    <option value="proprio" {{ 'selected' if veiculo and veiculo['tipo']=='proprio' }}>Próprio da loja</option>
+                    <option value="consignado" {{ 'selected' if veiculo and veiculo['tipo']=='consignado' }}>Consignado</option>
+                </select>
+            </div>
+        </div>
+        <div class="linha" id="bloco_consignado">
+            <div class="campo">
+                <label>Nome do proprietário</label>
+                <input type="text" name="consignado_nome" value="{{ veiculo['consignado_nome'] if veiculo else '' }}">
+            </div>
+            <div class="campo">
+                <label>Contato do proprietário</label>
+                <input type="text" name="consignado_contato" value="{{ veiculo['consignado_contato'] if veiculo else '' }}">
+            </div>
+            <div class="campo">
+                <label>Valor a repassar (R$)</label>
+                <input type="number" step="0.01" name="consignado_valor_repasse" value="{{ veiculo['consignado_valor_repasse'] if veiculo else '' }}">
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Comercial</legend>
+        <div class="linha">
+            <div class="campo">
+                <label>Valor de anúncio (R$)</label>
+                <input type="number" step="0.01" name="valor_anuncio" value="{{ veiculo['valor_anuncio'] if veiculo else '' }}">
+            </div>
+            {% if not veiculo %}
+            <div class="campo">
+                <label>Data de entrada</label>
+                <input type="date" name="data_entrada">
+            </div>
+            {% endif %}
+        </div>
+        <div class="campo">
+            <label>Observações</label>
+            <textarea name="observacoes" rows="3">{{ veiculo['observacoes'] if veiculo else '' }}</textarea>
+        </div>
+    </fieldset>
+
+    <div class="acoes-form">
+        <button type="submit" class="botao botao-primario">Salvar veículo</button>
+        <a href="{{ url_for('index') }}" class="botao">Cancelar</a>
+    </div>
+</form>
+
+<script>
+const selMarca = document.getElementById('fipe_marca');
+const selModelo = document.getElementById('fipe_modelo');
+const selAno = document.getElementById('fipe_ano');
+const resultadoBox = document.getElementById('fipe_resultado');
+
+function preencher(select, itens, labelPadrao, chaveValor, chaveTexto) {
+    select.innerHTML = `<option value="">${labelPadrao}</option>`;
+    itens.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item[chaveValor];
+        opt.textContent = item[chaveTexto];
+        select.appendChild(opt);
+    });
+    select.disabled = false;
+}
+
+fetch('/api/fipe/marcas')
+    .then(r => r.json())
+    .then(dados => preencher(selMarca, dados, 'Selecione a marca', 'code', 'name'))
+    .catch(() => { selMarca.innerHTML = '<option value="">Erro ao carregar (verifique a internet)</option>'; });
+
+selMarca.addEventListener('change', () => {
+    selModelo.innerHTML = '<option value="">Carregando...</option>';
+    selAno.innerHTML = '<option value="">Selecione o modelo</option>';
+    selAno.disabled = true;
+    resultadoBox.style.display = 'none';
+    if (!selMarca.value) return;
+    fetch(`/api/fipe/modelos/${selMarca.value}`)
+        .then(r => r.json())
+        .then(dados => preencher(selModelo, dados, 'Selecione o modelo', 'code', 'name'));
+});
+
+selModelo.addEventListener('change', () => {
+    selAno.innerHTML = '<option value="">Carregando...</option>';
+    resultadoBox.style.display = 'none';
+    if (!selModelo.value) return;
+    fetch(`/api/fipe/anos/${selMarca.value}/${selModelo.value}`)
+        .then(r => r.json())
+        .then(dados => preencher(selAno, dados, 'Selecione o ano', 'code', 'name'));
+});
+
+selAno.addEventListener('change', () => {
+    resultadoBox.style.display = 'none';
+    if (!selAno.value) return;
+    fetch(`/api/fipe/valor/${selMarca.value}/${selModelo.value}/${selAno.value}`)
+        .then(r => r.json())
+        .then(dados => {
+            document.getElementById('fipe_valor_texto').textContent = 'Valor FIPE: ' + dados.price;
+            document.getElementById('fipe_mes_texto').textContent = ' (' + dados.referenceMonth + ')';
+            resultadoBox.style.display = 'block';
+
+            document.getElementById('input_fipe_marca_codigo').value = selMarca.value;
+            document.getElementById('input_fipe_modelo_codigo').value = selModelo.value;
+            document.getElementById('input_fipe_ano_codigo').value = selAno.value;
+            document.getElementById('input_valor_fipe_mes').value = dados.referenceMonth;
+
+            const numerico = parseFloat(
+                String(dados.price).replace('R$', '').trim().replace(/\./g, '').replace(',', '.')
+            );
+            document.getElementById('input_valor_fipe').value = isNaN(numerico) ? '' : numerico;
+
+            // Preenche marca/modelo/ano se estiverem vazios
+            const campoMarca = document.querySelector('input[name="marca"]');
+            const campoModelo = document.querySelector('input[name="modelo"]');
+            if (!campoMarca.value) campoMarca.value = selMarca.options[selMarca.selectedIndex].text;
+            if (!campoModelo.value) campoModelo.value = selModelo.options[selModelo.selectedIndex].text;
+            if (dados.modelYear) {
+                const campoAnoModelo = document.querySelector('input[name="ano_modelo"]');
+                if (!campoAnoModelo.value) campoAnoModelo.value = dados.modelYear;
+            }
+        });
+});
+
+function alternarBlocoConsignado() {
+    const bloco = document.getElementById('bloco_consignado');
+    bloco.style.display = document.getElementById('campo_tipo').value === 'consignado' ? 'flex' : 'none';
+}
+document.getElementById('campo_tipo').addEventListener('change', alternarBlocoConsignado);
+alternarBlocoConsignado();
+</script>
+{% endblock %}

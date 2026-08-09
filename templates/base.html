@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block titulo %}Estoque de Veículos KF Multimarcas{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="icon" href="{{ url_for('static', filename='img/logo.jpeg') }}">
+</head>
+<body>
+<header class="topo">
+    <a href="{{ url_for('index') }}" class="logo">
+        <img src="{{ url_for('static', filename='img/logo.jpeg') }}" alt="KF Multimarcas" class="logo-img">
+        Estoque de Veículos KF Multimarcas
+    </a>
+    <div class="nav-direita">
+        <a href="{{ url_for('pesquisa_fipe') }}" class="botao">Pesquisar FIPE</a>
+        <a href="{{ url_for('novo_veiculo') }}" class="botao botao-primario">+ Novo veículo</a>
+    </div>
+</header>
+<div class="faixa-lojas">
+    <div class="loja-info">
+        <span class="loja-nome">📍 KF MULTIMARCAS – Loja 1</span>
+        <span>Av. Brasil, 61 – Jardim América – Iguape/SP</span>
+    </div>
+    <div class="loja-info">
+        <span class="loja-nome">📍 KF AVENIDA – Loja 2</span>
+        <span>Av. Adhemar de Barros, 880 – Jardim Sinho Rollo – Iguape/SP</span>
+    </div>
+    <div class="loja-info">
+        <span class="loja-nome">📲 WhatsApp</span>
+        <span>(13) 98145-5229 | (13) 99668-3982</span>
+    </div>
+</div>
+
+<main class="conteudo">
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% if mensagens %}
+            {% for categoria, msg in mensagens %}
+                <div class="alerta alerta-{{ categoria }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% block conteudo %}{% endblock %}
+</main>
+</body>
+</html>

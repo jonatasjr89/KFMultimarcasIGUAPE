@@ -1,0 +1,4 @@
+ABRA O CMD NA PASTA DE ORIGEM
+1 pip install -r requirements.txt
+2 python app.py
+3 ACESSE O LINK http://localhost:5000/

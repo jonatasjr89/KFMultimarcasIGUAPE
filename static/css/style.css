@@ -1,0 +1,355 @@
+:root {
+    --azul: #1d4ed8;
+    --azul-claro: #eff6ff;
+    --verde: #16a34a;
+    --vermelho: #dc2626;
+    --laranja: #d97706;
+    --cinza: #64748b;
+    --cinza-claro: #f1f5f9;
+    --borda: #e2e8f0;
+    --texto: #1e293b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    margin: 0;
+    background: #f8fafc;
+    color: var(--texto);
+}
+
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 24px;
+    background: #05070d;
+    border-bottom: 1px solid #1e2433;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: white;
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 44px;
+    width: 44px;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.faixa-lojas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 28px;
+    padding: 8px 24px;
+    background: #0d1220;
+    border-bottom: 1px solid #1e2433;
+    position: sticky;
+    top: 64px;
+    z-index: 9;
+}
+.loja-info {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.78rem;
+    color: #b6c0d6;
+    line-height: 1.35;
+}
+.loja-nome {
+    font-weight: 700;
+    color: white;
+}
+@media (max-width: 700px) {
+    .faixa-lojas { position: static; }
+}
+
+.conteudo {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+}
+
+.nav-direita {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.botao {
+    display: inline-block;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--borda);
+    background: white;
+    color: var(--texto);
+    text-decoration: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.botao-primario {
+    background: var(--azul);
+    border-color: var(--azul);
+    color: white;
+}
+
+.botao-perigo {
+    background: white;
+    border-color: var(--vermelho);
+    color: var(--vermelho);
+}
+
+.alerta {
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.alerta-sucesso { background: #dcfce7; color: #166534; }
+.alerta-erro { background: #fee2e2; color: #991b1b; }
+
+.abas {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+.aba {
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: white;
+    border: 1px solid var(--borda);
+    color: var(--cinza);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+.aba.ativa {
+    background: var(--azul);
+    color: white;
+    border-color: var(--azul);
+}
+
+.busca {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+.busca input[type="text"] {
+    flex: 1;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--borda);
+}
+
+.grade-veiculos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.cartao-veiculo {
+    background: white;
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--texto);
+    transition: box-shadow .15s;
+}
+.cartao-veiculo:hover { box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+
+.foto-capa {
+    position: relative;
+    aspect-ratio: 4/3;
+    background: var(--cinza-claro);
+}
+.foto-capa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sem-foto {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cinza); font-size: 0.85rem;
+}
+
+.selo {
+    position: absolute;
+    top: 8px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: white;
+}
+.selo-vendido { left: 8px; background: var(--cinza); }
+.selo-consignado { right: 8px; background: var(--laranja); }
+.selo-disponivel { background: var(--verde); color: white; padding: 3px 9px; border-radius: 20px; font-size: .78rem; }
+
+.selos-detalhe .selo { position: static; display: inline-block; margin-right: 6px; }
+
+.info-cartao {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.info-cartao span { font-size: 0.85rem; color: var(--cinza); }
+.info-cartao .valor { color: var(--azul); font-weight: 600; }
+
+.vazio { color: var(--cinza); padding: 30px 0; text-align: center; }
+
+/* Formulário */
+.formulario fieldset {
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background: white;
+}
+.formulario legend { font-weight: 600; padding: 0 6px; }
+.ajuda { color: var(--cinza); font-size: 0.85rem; margin-top: 0; }
+
+.linha {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.campo { flex: 1; min-width: 160px; display: flex; flex-direction: column; gap: 4px; }
+.campo label { font-size: 0.85rem; color: var(--cinza); }
+.campo input, .campo select, .campo textarea {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--borda);
+    font-size: 0.95rem;
+}
+
+.resultado-fipe {
+    margin-top: 10px;
+    background: var(--azul-claro);
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: var(--azul);
+}
+
+.acoes-form { display: flex; gap: 10px; }
+
+/* Detalhe do veículo */
+.voltar { color: var(--cinza); text-decoration: none; font-size: 0.9rem; }
+
+.cabecalho-veiculo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 10px 0 20px;
+}
+.subtitulo { color: var(--cinza); margin: 4px 0 10px; }
+.acoes-topo { display: flex; gap: 8px; }
+
+.grade-detalhe {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 16px;
+}
+@media (max-width: 900px) {
+    .grade-detalhe { grid-template-columns: 1fr; }
+}
+
+.painel {
+    background: white;
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    padding: 16px;
+}
+.painel h2 { margin-top: 0; font-size: 1.05rem; }
+.painel h3 { font-size: 0.95rem; margin-bottom: 6px; }
+
+.form-fotos { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+
+.galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+}
+.miniatura { position: relative; aspect-ratio: 1; }
+.miniatura img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+.botao-excluir-foto {
+    position: absolute; top: 4px; right: 4px;
+    background: rgba(0,0,0,.6); color: white; border: none;
+    width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+    line-height: 1;
+}
+
+.lista-valores { list-style: none; padding: 0; margin: 0 0 10px; }
+.lista-valores li {
+    display: flex; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px dashed var(--borda);
+    font-size: 0.92rem;
+}
+.link-sutil { font-size: 0.85rem; color: var(--azul); }
+
+.form-saida { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+
+.detalhes-fipe { margin-top: 6px; font-size: 0.85rem; color: var(--cinza); }
+
+.lista-historico { list-style: none; padding: 0; margin: 0; }
+.lista-historico li {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px dashed var(--borda);
+    font-size: 0.92rem;
+}
+
+.valor-destaque {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--azul);
+    margin: 4px 0 18px;
+}
+
+.botoes-whatsapp {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.botao-whatsapp {
+    background: #25d366;
+    border-color: #25d366;
+    color: white;
+    font-weight: 600;
+    text-align: center;
+}
+
+.galeria-publica {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+.caixa-compartilhar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: white;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+.caixa-compartilhar input {
+    flex: 1;
+    min-width: 200px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--borda);
+    color: var(--cinza);
+}
